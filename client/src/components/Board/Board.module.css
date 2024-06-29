@@ -1,0 +1,349 @@
+.section {
+  min-width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+  padding: 18px 20px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.box1 {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 7px 0;
+  align-items: center;
+
+  h2 {
+    font-weight: 500;
+  }
+
+  select {
+    border: none;
+    outline: none;
+    font-size: 1.1rem;
+  }
+}
+
+.box2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.dataSection {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  height: calc(-6.7rem + 100vh);
+  overflow-x: auto; /* Enable horizontal scrolling */
+  width: 100%;
+  scrollbar-width: thin; /* Firefox: Set scrollbar width */
+  scrollbar-color: #9cb7c5;
+  padding-bottom: 1rem;
+}
+
+.dataBox {
+  min-width: 24rem;
+  height: 100%;
+  background-color: #eef2f5;
+  font-size: 1.3rem;
+  padding: 15px 14px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.dataBoxHeader {
+  display: flex;
+  justify-content: space-between;
+}
+
+.iconGrp {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+/* MODAL SECTION */
+
+.modalSection {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(141, 148, 152, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.modal {
+  width: 45rem;
+  height: 32rem;
+  background-color: #ffffff;
+  z-index: 100;
+  border-radius: 12px;
+  padding: 20px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+}
+
+.title {
+  input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 2px solid #e2e2e2;
+    margin-top: 8px;
+    outline: none;
+    /* color: #E2E2E2; */
+    color: black;
+    font-size: 15px;
+  }
+}
+
+.red {
+  color: red;
+}
+
+/* CHIPS */
+
+.chipsLabel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chipsGrp {
+  display: flex;
+  gap: 13px;
+}
+
+.chip {
+  border-radius: 5px;
+  border: 2px solid #e2e2e2;
+  background-color: #ffffff;
+  outline: none;
+  padding: 4px 2px;
+  width: 10rem;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.chipCircle {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+#redCircle {
+  background-color: red;
+}
+
+#blueCircle {
+  background-color: rgb(0, 149, 255);
+}
+
+#greenCircle {
+  background-color: rgb(0, 255, 38);
+}
+
+.spaceBtwn {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+justify-content: space-between;
+  label {
+    width: 15%;
+  }
+
+  input {
+    width: 85%;
+    padding: 8px 10px;
+    border: 2px solid #e2e2e2;
+    /* margin-top: 8px; */
+    outline: none;
+    /* color: #E2E2E2; */
+    color: black;
+    font-size: 15px;
+  }
+}
+
+.checboxWrap {
+  display: flex;
+  gap: 0.8rem;
+  flex-direction: column;
+  overflow: auto;
+  scrollbar-color: #9CB7C5 #FFFFFF;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+  max-height: 9rem;
+  padding: 7px 0;
+}
+
+.taskBorder {
+  display: flex;
+  gap: 5px;
+  border: 1px solid #e2e2e2;
+  padding: 9px;
+  border-radius: 8px;
+  width: 98%;
+
+  input {
+    font-size: 1rem;
+  }
+}
+
+#taskInput {
+  border: none;
+  outline: none;
+}
+
+.modalBtnGrp {
+  display: flex;
+  justify-content: space-between;
+}
+
+.saveBtn,
+.cancelBtn {
+  padding: 10px 17px;
+  width: 7rem;
+  font-size: 1rem;
+  border-radius: 7px;
+  font-weight: 500;
+}
+
+.saveBtn {
+  background-color: #17a2b8;
+  color: white;
+  border: none;
+}
+
+.cancelBtn {
+  background-color: transparent;
+  color: white;
+  border: none;
+  border: 2px solid #cf3636;
+  color: #cf3636;
+}
+
+.addBtn {
+  border: none;
+  background-color: transparent;
+  font-size: 1.1rem;
+  color: #767575;
+}
+
+/* TODO CARDS */
+
+.dataCardWrap {
+  display: flex;
+  gap: 1rem;
+  flex-direction: column;
+  overflow: auto;
+  height: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: #8daab9 #d6eaf4;
+  margin-top: 1rem;
+  padding-bottom: 3rem;
+}
+
+.todoCard {
+  width: 95%;
+  background-color: #ffffff;
+  height: auto;
+  font-size: 1rem;
+  border-radius: 20px;
+  padding: 1.3rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  z-index: 1;
+
+  h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+}
+
+
+.editModalPosition{
+position: absolute;
+display: flex;
+flex-direction: column;
+box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+width: 6rem;
+background-color: #FFFFFF;
+height: auto;
+padding: .8rem 1rem;
+border-radius: 11px;
+align-items: start;
+left: 15rem;
+top: 3rem;
+z-index: 10;
+gap: 5px;
+
+
+button{
+  border: none;
+  width: 100%;
+  background-color: #FFFFFF;
+  font-size: 1.1rem;
+  display: flex;
+}
+}
+
+
+
+/* DATA CARD WRAP */
+
+.checboxCardWrap {
+  display: flex;
+  gap: 0.8rem;
+  flex-direction: column;
+  height: auto;
+ 
+}
+
+
+.dataCardBtnWrap {
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    display: flex;
+    gap: 5px;
+  }
+
+  button {
+    background-color: #dbdbdb;
+    color: #5a5a5a;
+    border-radius: 8px;
+    padding: 5px 10px;
+    border: none;
+    font-size: 0.7rem;
+  }
+}
+
+.dropdownIconText {
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    font-size: 1.2rem;
+  }
+}
+
+
+.checboxCardWrap2{
+  display: flex;
+  gap: .5rem;
+  flex-direction: column;
+}

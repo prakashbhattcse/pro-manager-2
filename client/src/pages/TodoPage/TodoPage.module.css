@@ -1,0 +1,42 @@
+
+.shareSection{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.todoShareCard{
+    width:35% ;
+ padding: 2rem;
+    border: 5px solid #EDF5FE;
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+
+
+    h2{
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-transform: capitalize;
+    }
+}
+
+#dueDateBtn{
+    background-color: #CF3636;
+    padding: 3px 10px;
+    color: white;
+    border-radius: 12px;
+    font-size: .8rem;
+    margin-left: 5px;
+}
+
+#shareScroll{
+    overflow: auto;
+    scrollbar-color: #9CB7C5 #FFFFFF;
+    scrollbar-width: thin;
+    scrollbar-gutter: stable;
+    max-height: 14rem;
+}

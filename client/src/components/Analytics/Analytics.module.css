@@ -1,0 +1,69 @@
+.section {
+  width: 100%;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  
+}
+
+.containerWrap {
+  width: 100%;
+  display: flex;
+  gap: 2rem;
+  padding-top: 2rem;
+
+ul{
+    display: flex;
+    gap: 1.2rem;
+    flex-direction: column;
+}
+
+  ul li {
+    list-style: none;
+  }
+}
+
+.dataContianer {
+  width: 28rem;
+  background-color: #f9fcff;
+padding: 2rem;
+border-radius: 12px;
+
+
+  li {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  li p{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+
+}
+
+.icon {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background-color: #90c4cc;
+  color: #90c4cc;
+  display: inline-block;
+}
+
+.label {
+  font-size: 1.4rem;
+
+}
+
+.dataValue{
+    font-weight: 600;
+}
+

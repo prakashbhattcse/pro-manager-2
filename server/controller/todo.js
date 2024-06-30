@@ -30,11 +30,7 @@ const getAllTodo = async (req, res) => {
     try {
         const { id } = req.params;
         const allTodos = await Todo.find({ createdBy: req.userId });
-
-        console.log(`User ID: ${req.userId}`); 
-        console.log(`Todo ID from params: ${id}`);
-        console.log(`All Todos:`, allTodos); 
-        res.status(200).json(allTodos);
+           res.status(200).json(allTodos);
 
     } catch (error) {
         console.error(error);
@@ -47,8 +43,8 @@ const getTodoById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        console.log(_id  , req.userId)
-        const result = await Todo.findOne({ _id: id, createdBy: req.userId });
+        console.log( id)
+        const result = await Todo.findOne({ _id: id});
 
         if (result) {
             res.status(200).json(result);
@@ -116,7 +112,7 @@ const deleteTodo = async (req, res) => {
     try {
         const { id } = req.params;
         // await Todo.deleteOne({ _id: id })
-        await Todo.deleteOne({ _id: id, createdBy: req.userId });
+        await Todo.deleteOne({ _id: id });
         res.status(200).json({ message: "Todo Deleted succesfully" })
     } catch (error) {
         res.status(500).json({ message: "Failed to create todo" })

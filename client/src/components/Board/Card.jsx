@@ -31,8 +31,8 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
             editModal && <div>
               <div className={style.editModalPosition}>
                 <button onClick={() => handleEditClick(todo)}>Edit</button>
-                <button onClick={() => handleShareClick(index)}>Share</button>
-                <button onClick={() => handleDeleteClick(index)}>Delete</button>
+                <button onClick={() => handleShareClick(todo._id)}>Share</button>
+                <button onClick={() => handleDeleteClick(todo._id)}>Delete</button>
               </div>
             </div>
           }

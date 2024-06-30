@@ -10,19 +10,27 @@ const TodoPage = () => {
 
     const { id } = useParams();
     const [todo, setTodo] = useState(null);
+    // const [loading , setLoading] = useState(true);
+
+    console.log(id)
 
     useEffect(() => {
         const fetchTodo = async () => {
             try {
                 const todoData = await getTodoById(id);
+                if(todoData){
                 setTodo(todoData);
-                console.log(todo)
+                console.log(todoData)
+                }
             } catch (error) {
                 console.error('Failed to fetch todo:', error);
 
             }
         };
-        fetchTodo();
+
+        setTimeout(()=>{
+            fetchTodo();
+        },500)
     }, [id]);
 
     if (!todo) {
@@ -31,23 +39,24 @@ const TodoPage = () => {
     
     const formattedDate = moment(todo.currentDate).format("MMM Do");
     return (
-
+        <div>
+   {todo? 
         <div className={style1.shareSection}>
             <div className={style1.todoShareCard}>
 
-                <p style={{ textTransform: "capitalize" }}>{todo.priority} Priority</p>
+                <p style={{ textTransform: "capitalize" }}>{todo?.priority} Priority</p>
 
 
-                <h2>{todo.title}</h2>
+                <h2>{todo?.title}</h2>
 
                 <div className={style.checboxCardWrap}>
                     <div className={style.dropdownIconText}>
-                        <p>Checklist: {todo.tasks.filter(task => task.completed).length}/{todo.tasks.length}</p>
+                        <p>Checklist: {todo?.tasks?.filter(task => task.completed).length}/{todo?.tasks?.length}</p>
 
                     </div>
 
                     <div id={style1.shareScroll} className={style.checboxCardWrap2}>
-                        {todo.tasks.map((task, taskIndex) => (
+                        {todo?.tasks.map((task, taskIndex) => (
                             <div key={taskIndex} className={style.taskBorder}>
                                 <input
                                     type="checkbox"
@@ -68,6 +77,8 @@ const TodoPage = () => {
                 </div>
 
             </div>
+        </div>
+        : <h1>Loading...</h1> }
         </div>
     );
 };

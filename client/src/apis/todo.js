@@ -23,7 +23,6 @@ export const createTodo = async ({ assignTo, dueDate, priority, title, tasks }) 
 
 
 export const getAllTodo = async (req, res) => {
-
     try {
         const reqUrl = `${link}/getAllTodo`;
         const response = await axios.get(reqUrl);
@@ -38,7 +37,6 @@ export const getTodoById = async (id) => {
     try {
         const reqUrl = `${link}/getTodoById/${id}`;
         const result = await axios.get(reqUrl);
-
         if (result) {
             return result.data;
         }

@@ -1,13 +1,13 @@
 import React from 'react';
 import style from "./Board.module.css";
 
-const TodoModal = ({ editData, modalInputChange, handlePriorityClick, handleTaskChange, handleTaskToggle, handleAddTask, handleCancel, handleSave }) => {
+const TodoModal = ({ modalData, modalInputChange, handlePriorityClick, handleTaskChange, handleTaskToggle, handleAddTask, handleCancel, handleSave }) => {
     return (
         <div className={style.modalSection}>
             <div className={style.modal}>
                 <div className={style.title}>
                     <p>Title <span className={style.red}>*</span></p>
-                    <input type="text" name='title' placeholder='Enter Task Title' onChange={modalInputChange} value={editData.title} />
+                    <input type="text" name='title' placeholder='Enter Task Title' onChange={modalInputChange} value={modalData.title} />
                 </div>
 
                 <div className={style.chipsLabel}>
@@ -39,15 +39,15 @@ const TodoModal = ({ editData, modalInputChange, handlePriorityClick, handleTask
 
                 <div className={style.spaceBtwn}>
                     <label htmlFor="assignTo">Assign To</label>
-                    <input type="text" placeholder='Add a assignee' name="assignTo" id="assignTo" value={editData.assignTo} onChange={modalInputChange}
+                    <input type="text" placeholder='Add a assignee' name="assignTo" id="assignTo" value={modalData.assignTo} onChange={modalInputChange}
                     />
                 </div>
 
                 <div style={{ minHeight: "13rem" }}>
-                    <p style={{ fontSize: "1rem" }}>Checklist({editData.tasks.filter(task => task.completed).length}/{editData.tasks.length} ) <span className={style.red}>*</span></p>
+                    <p style={{ fontSize: "1rem" }}>Checklist({modalData.tasks.filter(task => task.completed).length}/{modalData.tasks.length} ) <span className={style.red}>*</span></p>
 
                     <div className={style.checboxWrap}>
-                        {editData.tasks.map((task, index) => (
+                        {modalData.tasks.map((task, index) => (
                             <div key={index} className={style.taskBorder} >
                                 <input type="checkbox" checked={task.completed} onChange={() => handleTaskToggle(index)}
                                 />
@@ -60,7 +60,7 @@ const TodoModal = ({ editData, modalInputChange, handlePriorityClick, handleTask
                 </div>
 
                 <div className={style.modalBtnGrp}>
-                    <input type="date" name="dueDate" id="dueDate" placeholder='Due Date' value={editData.dueDate || ''} onChange={modalInputChange}
+                    <input type="date" name="dueDate" id="dueDate" placeholder='Due Date' value={modalData.dueDate || ''} onChange={modalInputChange}
                     />
 
                     <div style={{ display: "flex", gap: "10px" }}>

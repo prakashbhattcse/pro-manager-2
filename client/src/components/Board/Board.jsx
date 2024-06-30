@@ -15,7 +15,7 @@ const Board = () => {
   const formattedDate = moment(currentDate).format("Do MMM, YYYY");
   const [todos, setTodos] = useState([]);
   const [data , setData] = useState();
-  const [editData , setEditData] = useState();
+  const [refresh , setRefresh] = useState(false);
   const [modal, setModal] = useState(false);
   const [dropdown, setDropdown] = useState({});
   const [modalData, setModalData] = useState({
@@ -35,22 +35,23 @@ const Board = () => {
     }));
   };
 
-  useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const allTodos = await getAllTodo();
-        setTodos(allTodos);
-      } catch (error) {
-        console.error('Failed to fetch todos:', error);
-      }
-    };
 
+  const fetchTodos = async () => {
+    try {
+      const allTodos = await getAllTodo();
+      setTodos(allTodos);
+    } catch (error) {
+      console.error('Failed to fetch todos:', error);
+    }
+  };
+
+  useEffect(() => {   
     fetchTodos();
   }, []);
 
   const modalInputChange = (event) => {
-    setEditData({
-      ...editData,
+    setModalData({
+      ...modalData,
       [event.target.name]: event.target.value
     });
   };
@@ -104,7 +105,7 @@ const Board = () => {
 
   const handleSave = async () => {
   if(isEditing){
-    if (!editData.title || !editData.priority || editData.tasks.length === 0) {
+    if (!modalData.title || !modalData.priority || modalData.tasks.length === 0) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -117,10 +118,12 @@ const Board = () => {
   }
     try {
       if (isEditing) {
-        console.log(editData)
-        let id = editData._id;
-        const res = await updateTodo(id, editData);
+        console.log(modalData)
+        let id = modalData._id;
+        const res = await updateTodo(id, modalData);
          if(res){
+          setRefresh(true);
+
         toast.success('Task updated successfully');
         return
          }
@@ -147,8 +150,7 @@ const Board = () => {
       });
       setIsEditing(false);
       setCurrentTodo(null);
-      fetchData();
-    } catch (error) {
+        } catch (error) {
       console.error('Failed to save task:', error);
       toast.error('Failed to save task');
     }
@@ -167,22 +169,23 @@ const Board = () => {
     setCurrentTodo(null);
   };
 
-  const handleStatusChange = async (todo , newStatus) => {
+  const handleStatusChange = async (todo, newStatus) => {
+
+    console.log(todo)
+    console.log(newStatus)
+  
+    const updatedTodo = { ...todo, status: newStatus };
+    // setModalData(updatedTodo);
+  
     try {
-      // const updatedTodos = [...todos];
-      // updatedTodos[todoIndex].status = newStatus;
-      // setTodos(updatedTodos);
-      setEditData(todo)
-      setEditData((prev)=>({...prev , status : newStatus}))
-      let id = editData._id;
-      await updateTodo(id , editData);
+      let id = updatedTodo._id;
+      await updateTodo(id, updatedTodo);
       toast.success('Status updated successfully!');
-      fetchData();
+      fetchData(); 
     } catch (error) {
       toast.error('Failed to update status.');
-    }
-  };
-
+    }
+  };
   const handleModalOpen = () => {
     setIsEditing(false);
     setModalData({
@@ -198,23 +201,21 @@ const Board = () => {
   const handleEditClick = (todo) => {
     setIsEditing(true);
     // setCurrentTodo(index);
-    setEditData(todo); // Ensure todos[index] is defined
+    setModalData(todo); // Ensure todos[index] is defined
     setModal(true);
   };
 
-  const handleDeleteClick = async (index) => {
-    const id = todos[index]._id; // Ensure todos[index] is defined
-
+  const handleDeleteClick = async (id) => {
     const result = await deleteTodo(id);
     if (result) {
       setTodos(todos.filter((todo) => todo.id !== id)); // Ensure todos[index] is defined
       toast.success('Todo deleted successfully!');
     }
+    fetchData();
   };
 
 
-  const handleShareClick = (index) => {
-    const id = todos[index]._id;
+  const handleShareClick = (id) => {
     const linkToCopy = `http://localhost:5173/share/${id}`;
 
     navigator.clipboard.writeText(linkToCopy)
@@ -234,7 +235,7 @@ const Board = () => {
 
   const fetchData = async() => {
     let id = localStorage.getItem("userId")
-    let res = await getUserTodoById(id , );
+    let res = await getUserTodoById(id);
     if(res.data){
       setData(res.data)
     }
@@ -243,7 +244,7 @@ const Board = () => {
 
   useEffect(()=>{
     fetchData();
-  },[])
+  },[setRefresh , modalData , refresh])
 
   return (
     <div className={style.section}>
@@ -385,12 +386,13 @@ const Board = () => {
 
       {modal && (
         <TodoModal
-        editData={editData}
+          modalData={modalData}
           modalInputChange={modalInputChange}
           handlePriorityClick={handlePriorityClick}
           handleTaskChange={handleTaskChange}
           handleTaskToggle={handleTaskToggle}
           handleAddTask={handleAddTask}
+          setModal={setModal}
           handleCancel={handleCancel}
           handleSave={handleSave}
           isEditing={isEditing}

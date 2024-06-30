@@ -47,9 +47,9 @@ const getTodoById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        console.log(_id  , req.userId)
-        const result = await Todo.findOne({ _id: id, createdBy: req.userId });
-
+        console.log(id)
+        const result = await Todo.findOne({ _id: id });
+console.log(result)
         if (result) {
             res.status(200).json(result);
         } else {
@@ -115,8 +115,8 @@ const updateTodo = async (req, res) => {
 const deleteTodo = async (req, res) => {
     try {
         const { id } = req.params;
-        // await Todo.deleteOne({ _id: id })
-        await Todo.deleteOne({ _id: id, createdBy: req.userId });
+        
+        await Todo.deleteOne({ _id: id });
         res.status(200).json({ message: "Todo Deleted succesfully" })
     } catch (error) {
         res.status(500).json({ message: "Failed to create todo" })

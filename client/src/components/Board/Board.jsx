@@ -167,21 +167,44 @@ const Board = () => {
     setCurrentTodo(null);
   };
 
+
+  // const handleStatusChange = async (todo, newStatus) => {
+
+  //   console.log(todo)
+  //   console.log(newStatus)
+  
+  //   const updatedTodo = { ...todo, status: newStatus };
+  //   setEditData(updatedTodo);
+  
+  //   try {
+  //     let id = updatedTodo._id;
+  //     await updateTodo(id, updatedTodo);
+  //     toast.success('Status updated successfully!');
+  //     fetchData(); // Refetch data to update UI
+  //   } catch (error) {
+  //     toast.error('Failed to update status.');
+  //   }
+  // };
+  
+
   const handleStatusChange = async (todo , newStatus) => {
-    try {
-      // const updatedTodos = [...todos];
-      // updatedTodos[todoIndex].status = newStatus;
-      // setTodos(updatedTodos);
-      setEditData(todo)
-      setEditData((prev)=>({...prev , status : newStatus}))
-      let id = editData._id;
-      await updateTodo(id , editData);
-      toast.success('Status updated successfully!');
-      fetchData();
-    } catch (error) {
-      toast.error('Failed to update status.');
-    }
-  };
+
+        console.log(todo)
+        console.log(newStatus)
+        try {
+          
+          setEditData(todo)
+          
+          setEditData((prev)=>({...prev , status : newStatus}))
+          console.log(editData)
+          let id = editData._id;
+          await updateTodo(id , editData);
+          toast.success('Status updated successfully!');
+          fetchData();
+        } catch (error) {
+          toast.error('Failed to update status.');
+        }
+      };  
 
   const handleModalOpen = () => {
     setIsEditing(false);
@@ -197,24 +220,25 @@ const Board = () => {
 
   const handleEditClick = (todo) => {
     setIsEditing(true);
-    // setCurrentTodo(index);
-    setEditData(todo); // Ensure todos[index] is defined
+   
+    setEditData(todo); 
     setModal(true);
   };
 
-  const handleDeleteClick = async (index) => {
-    const id = todos[index]._id; // Ensure todos[index] is defined
-
+  const handleDeleteClick = async (id) => {
+    console.log(id)
     const result = await deleteTodo(id);
+    console.log("id2")
+    console.log(id)
     if (result) {
-      setTodos(todos.filter((todo) => todo.id !== id)); // Ensure todos[index] is defined
+      setTodos(todos.filter((todo) => todo.id !== id));
       toast.success('Todo deleted successfully!');
     }
   };
 
 
-  const handleShareClick = (index) => {
-    const id = todos[index]._id;
+  const handleShareClick = (id) => {
+ 
     const linkToCopy = `http://localhost:5173/share/${id}`;
 
     navigator.clipboard.writeText(linkToCopy)
@@ -232,11 +256,14 @@ const Board = () => {
       });
   };
 
+
+  
   const fetchData = async() => {
     let id = localStorage.getItem("userId")
     let res = await getUserTodoById(id , );
     if(res.data){
       setData(res.data)
+      setTodos(res.data);
     }
     return;
   }

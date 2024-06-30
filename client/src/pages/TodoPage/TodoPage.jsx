@@ -9,6 +9,7 @@ import { getTodoById } from "../../apis/todo"
 const TodoPage = () => {
 
     const { id } = useParams();
+    console.log(id)
     const [todo, setTodo] = useState(null);
 
     useEffect(() => {

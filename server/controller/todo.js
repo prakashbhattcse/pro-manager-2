@@ -61,15 +61,13 @@ const getTodoById = async (req, res) => {
     }
 }
 
-const getUserDataById = async (req, res) => {
+const getUserTodoById = async (req, res) => {
 
     try {
         const { id } = req.params;
-
-        const result = await User.findOne({ _id: id });
-
+        const result = await Todo.find({ createdBy: id });
         if (result) {
-            res.status(200).json(result);
+            res.status(200).json({data : result});
         } else {
             res.status(404).json({ message: "Todo not found" });
         }
@@ -79,17 +77,31 @@ const getUserDataById = async (req, res) => {
     }
 }
 
-
 const updateTodo = async (req, res) => {
     try {
         const { id } = req.params;
-        const updatedFields = req.body;
-        const result = await Todo.updateOne({ _id: id, createdBy: req.userId }, { $set: updatedFields });
+        const { title, assignTo, priority, tasks, dueDate, status, createdBy } = req.body.editData;
 
+        // Construct the update object using $set operator
+        const updateObject = {
+            title,
+            assignTo,
+            priority,
+            tasks,
+            dueDate,
+            status,
+            createdBy
+        };
+
+        // Update the todo item in MongoDB using updateOne
+        const result = await Todo.updateOne({ _id: id }, { $set: updateObject });
+
+        // Check if no document matched the query
         if (result.n === 0) {
             throw new Error('Task not found or no changes made');
         }
 
+        // Fetch the updated todo item
         const updatedTodo = await Todo.findById(id);
 
         res.status(200).json(updatedTodo);
@@ -98,6 +110,7 @@ const updateTodo = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 const deleteTodo = async (req, res) => {
     try {
@@ -111,6 +124,6 @@ const deleteTodo = async (req, res) => {
 }
 
 
-module.exports = { createTodo, getTodoById, getAllTodo, updateTodo, deleteTodo };
+module.exports = { createTodo, getTodoById, getUserTodoById,getAllTodo, updateTodo, deleteTodo };
 
 

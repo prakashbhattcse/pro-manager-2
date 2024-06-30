@@ -47,11 +47,11 @@ export const getTodoById = async (id) => {
     }
 }
 
-export const updateTodo = async (id, updatedFields) => {
-    console.log(id, updatedFields)
+export const updateTodo = async (id , editData) => {
     try {
+        console.log(id)
         const reqUrl = `${link}/updateTodo/${id}`;
-        const response = await axios.put(reqUrl, updatedFields);
+        const response = await axios.put(reqUrl, {id, editData});
 
         return response.data;
     } catch (error) {
@@ -68,6 +68,19 @@ export const deleteTodo = async (id) => {
 
         if (response.data.message) {
             return response.data.message
+        }
+    } catch (error) {
+        return "Failed";
+    }
+}
+
+export const getUserTodoById = async (id) => {
+    try {
+        const reqUrl = `${link}/getUserTodoById/${id}`;
+        const result = await axios.get(reqUrl);
+             
+        if (result) {
+            return result.data;
         }
     } catch (error) {
         return "Failed";

@@ -9,7 +9,7 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
   const [editModal, setEditModal] = useState(false)
 
   const handleStatusClick = (newStatus) => {
-    handleStatusChange(index, newStatus);
+    handleStatusChange(todo , newStatus);
   };
 
   const toggleEditModal = () => {
@@ -30,7 +30,7 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
           {
             editModal && <div>
               <div className={style.editModalPosition}>
-                <button onClick={() => handleEditClick(index)}>Edit</button>
+                <button onClick={() => handleEditClick(todo)}>Edit</button>
                 <button onClick={() => handleShareClick(index)}>Share</button>
                 <button onClick={() => handleDeleteClick(index)}>Delete</button>
               </div>

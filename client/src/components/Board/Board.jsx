@@ -4,7 +4,7 @@ import moment from 'moment';
 import { CiSquareMinus } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
 import TodoModal from './TodoModal';
-import { createTodo, getAllTodo, updateTodo, deleteTodo } from '../../apis/todo';
+import { createTodo, getAllTodo, updateTodo, deleteTodo, getUserTodoById } from '../../apis/todo';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Card from './Card';
@@ -14,6 +14,8 @@ const Board = () => {
   const currentDate = new Date();
   const formattedDate = moment(currentDate).format("Do MMM, YYYY");
   const [todos, setTodos] = useState([]);
+  const [data , setData] = useState();
+  const [editData , setEditData] = useState();
   const [modal, setModal] = useState(false);
   const [dropdown, setDropdown] = useState({});
   const [modalData, setModalData] = useState({
@@ -47,8 +49,8 @@ const Board = () => {
   }, []);
 
   const modalInputChange = (event) => {
-    setModalData({
-      ...modalData,
+    setEditData({
+      ...editData,
       [event.target.name]: event.target.value
     });
   };
@@ -101,17 +103,27 @@ const Board = () => {
   };
 
   const handleSave = async () => {
+  if(isEditing){
+    if (!editData.title || !editData.priority || editData.tasks.length === 0) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+  }
+  else{
     if (!modalData.title || !modalData.priority || modalData.tasks.length === 0) {
       toast.error('Please fill in all required fields');
       return;
     }
+  }
     try {
-      if (isEditing && currentTodo !== null) {
-        const updatedTodos = [...todos];
-        const updatedTodo = await updateTodo(modalData._id, modalData);
-        updatedTodos[currentTodo] = updatedTodo;
-        setTodos(updatedTodos);
+      if (isEditing) {
+        console.log(editData)
+        let id = editData._id;
+        const res = await updateTodo(id, editData);
+         if(res){
         toast.success('Task updated successfully');
+        return
+         }
       } else {
         const newTodo = await createTodo({
           
@@ -135,6 +147,7 @@ const Board = () => {
       });
       setIsEditing(false);
       setCurrentTodo(null);
+      fetchData();
     } catch (error) {
       console.error('Failed to save task:', error);
       toast.error('Failed to save task');
@@ -154,14 +167,17 @@ const Board = () => {
     setCurrentTodo(null);
   };
 
-  const handleStatusChange = async (todoIndex, newStatus) => {
+  const handleStatusChange = async (todo , newStatus) => {
     try {
-      const updatedTodos = [...todos];
-      updatedTodos[todoIndex].status = newStatus;
-      setTodos(updatedTodos);
-
-      await updateTodo(updatedTodos[todoIndex]._id, { status: newStatus });
+      // const updatedTodos = [...todos];
+      // updatedTodos[todoIndex].status = newStatus;
+      // setTodos(updatedTodos);
+      setEditData(todo)
+      setEditData((prev)=>({...prev , status : newStatus}))
+      let id = editData._id;
+      await updateTodo(id , editData);
       toast.success('Status updated successfully!');
+      fetchData();
     } catch (error) {
       toast.error('Failed to update status.');
     }
@@ -179,10 +195,10 @@ const Board = () => {
     setModal(true);
   };
 
-  const handleEditClick = (index) => {
+  const handleEditClick = (todo) => {
     setIsEditing(true);
-    setCurrentTodo(index);
-    setModalData(todos[index]); // Ensure todos[index] is defined
+    // setCurrentTodo(index);
+    setEditData(todo); // Ensure todos[index] is defined
     setModal(true);
   };
 
@@ -216,7 +232,18 @@ const Board = () => {
       });
   };
 
-  console.log(todos)
+  const fetchData = async() => {
+    let id = localStorage.getItem("userId")
+    let res = await getUserTodoById(id , );
+    if(res.data){
+      setData(res.data)
+    }
+    return;
+  }
+
+  useEffect(()=>{
+    fetchData();
+  },[])
 
   return (
     <div className={style.section}>
@@ -244,7 +271,7 @@ const Board = () => {
             {/* Backlog CARDS */}
             <div className={style.dataCardWrap}>
           
-              {todos?.map((todo, index) => (
+              {data?.map((todo, index) => (
                 todo.status === 'Backlog' && (
                   <Card
                     key={todo._id}
@@ -278,7 +305,7 @@ const Board = () => {
             <ToastContainer />
             {/* CARD SECTION START */}
             <div className={style.dataCardWrap}>
-              {todos?.map((todo, index) => (
+              {data?.map((todo, index) => (
                 todo.status === 'To Do' && (
                   <Card
                     key={todo._id}
@@ -306,7 +333,7 @@ const Board = () => {
             </div>
             {/* IN PROGRESS CARDS */}
             <div className={style.dataCardWrap}>
-              {todos?.map((todo, index) => (
+              {data?.map((todo, index) => (
                 todo.status === 'Progress' && (
                   <Card
                     key={todo._id}
@@ -333,7 +360,7 @@ const Board = () => {
             </div>
             {/* DONE CARDS */}
             <div className={style.dataCardWrap}>
-              {todos?.map((todo, index) => (
+              {data?.map((todo, index) => (
                 todo.status === 'Done' && (
 
                   <Card
@@ -358,7 +385,7 @@ const Board = () => {
 
       {modal && (
         <TodoModal
-          modalData={modalData}
+        editData={editData}
           modalInputChange={modalInputChange}
           handlePriorityClick={handlePriorityClick}
           handleTaskChange={handleTaskChange}

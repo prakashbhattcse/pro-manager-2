@@ -10,13 +10,10 @@ import 'react-toastify/dist/ReactToastify.css';
 import Card from './Card';
 
 const Board = () => {
-
-
-
   const userName = localStorage.getItem("name") || "User";
   const currentDate = new Date();
   const formattedDate = moment(currentDate).format("Do MMM, YYYY");
-  const [todos, setTodos] = useState();
+  const [todos, setTodos] = useState([]);
   const [modal, setModal] = useState(false);
   const [dropdown, setDropdown] = useState({});
   const [modalData, setModalData] = useState({
@@ -104,13 +101,10 @@ const Board = () => {
   };
 
   const handleSave = async () => {
-console.log(todos)
-console.log(Object.values(todos))
     if (!modalData.title || !modalData.priority || modalData.tasks.length === 0) {
       toast.error('Please fill in all required fields');
       return;
     }
-
     try {
       if (isEditing && currentTodo !== null) {
         const updatedTodos = [...todos];
@@ -119,15 +113,15 @@ console.log(Object.values(todos))
         setTodos(updatedTodos);
         toast.success('Task updated successfully');
       } else {
-
         const newTodo = await createTodo({
+          
           ...modalData,
           status: 'Backlog',
+          createdBy: localStorage.getItem("userId"),
           createdAt: new Date(),
         });
-      
-        // setTodos([...todos, newTodo]);
-
+        setTodos([...todos, newTodo]); // Update todos state here
+        console.log(todos)
         toast.success('Task created successfully');
       }
 
@@ -139,13 +133,10 @@ console.log(Object.values(todos))
         tasks: [],
         dueDate: null,
       });
-
-
-
       setIsEditing(false);
       setCurrentTodo(null);
     } catch (error) {
-      console.log(todos)
+      console.error('Failed to save task:', error);
       toast.error('Failed to save task');
     }
   };
@@ -191,19 +182,20 @@ console.log(Object.values(todos))
   const handleEditClick = (index) => {
     setIsEditing(true);
     setCurrentTodo(index);
-    setModalData(todos[index]);
+    setModalData(todos[index]); // Ensure todos[index] is defined
     setModal(true);
   };
 
   const handleDeleteClick = async (index) => {
-    const id = todos[index]._id;
+    const id = todos[index]._id; // Ensure todos[index] is defined
 
     const result = await deleteTodo(id);
     if (result) {
-      setTodos(todos.filter((todo) => todo.id !== id))
+      setTodos(todos.filter((todo) => todo.id !== id)); // Ensure todos[index] is defined
       toast.success('Todo deleted successfully!');
     }
-  }
+  };
+
 
   const handleShareClick = (index) => {
     const id = todos[index]._id;
@@ -224,10 +216,8 @@ console.log(Object.values(todos))
       });
   };
 
+  console.log(todos)
 
-  useEffect(() => {
-        setTodos(modalData)
-  }, [modalData])
   return (
     <div className={style.section}>
       <div className={style.box1}>
@@ -253,12 +243,26 @@ console.log(Object.values(todos))
             </div>
             {/* Backlog CARDS */}
             <div className={style.dataCardWrap}>
-              {/* {Object.values(todos) && Object.values(todos)?.map((todo, index) => (
+          
+              {todos?.map((todo, index) => (
                 todo.status === 'Backlog' && (
-                  <Card key={todo._id} todo={todo} index={index} dropdown={dropdown} toggleDropdown={toggleDropdown} handleTaskToggleMain={handleTaskToggleMain} handleTaskChange={handleTaskChange} handleStatusChange={handleStatusChange} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} handleShareClick={handleShareClick}
+                  <Card
+                    key={todo._id}
+                    todo={todo}
+                    index={index}
+                    dropdown={dropdown}
+                    toggleDropdown={toggleDropdown}
+                    handleTaskToggleMain={handleTaskToggleMain}
+                    handleTaskChange={handleTaskChange}
+                    handleStatusChange={handleStatusChange}
+                    handleEditClick={handleEditClick}
+                    handleDeleteClick={handleDeleteClick}
+                    handleShareClick={handleShareClick}
                   />
                 )
-              ))} */}
+              ))}
+
+
             </div>
           </div>
 
@@ -274,7 +278,7 @@ console.log(Object.values(todos))
             <ToastContainer />
             {/* CARD SECTION START */}
             <div className={style.dataCardWrap}>
-              {/* {todos?.map((todo, index) => (
+              {todos?.map((todo, index) => (
                 todo.status === 'To Do' && (
                   <Card
                     key={todo._id}
@@ -290,7 +294,7 @@ console.log(Object.values(todos))
                     handleShareClick={handleShareClick}
                   />
                 )
-              ))} */}
+              ))}
             </div>
           </div>
           {/* CARD SECTION END */}
@@ -302,7 +306,7 @@ console.log(Object.values(todos))
             </div>
             {/* IN PROGRESS CARDS */}
             <div className={style.dataCardWrap}>
-              {/* {todos?.map((todo, index) => (
+              {todos?.map((todo, index) => (
                 todo.status === 'Progress' && (
                   <Card
                     key={todo._id}
@@ -318,7 +322,7 @@ console.log(Object.values(todos))
                     handleShareClick={handleShareClick}
                   />
                 )
-              ))} */}
+              ))}
             </div>
           </div>
 
@@ -329,7 +333,7 @@ console.log(Object.values(todos))
             </div>
             {/* DONE CARDS */}
             <div className={style.dataCardWrap}>
-              {/* {todos?.map((todo, index) => (
+              {todos?.map((todo, index) => (
                 todo.status === 'Done' && (
 
                   <Card
@@ -346,7 +350,7 @@ console.log(Object.values(todos))
                     handleShareClick={handleShareClick}
                   />
                 )
-              ))} */}
+              ))}
             </div>
           </div>
         </div>

@@ -11,9 +11,9 @@ export const createTodo = async ({ assignTo, dueDate, priority, title, tasks }) 
             priority,
             title,
             tasks,
-            createdBy:localStorage.getItem("userId")
+            createdBy: localStorage.getItem("userId"),
         })
-        console.log(response.data + "response data")
+        console.log(response.data)
         return response.data
     } catch (error) {
         console.log(error);

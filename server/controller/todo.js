@@ -1,33 +1,39 @@
 const Todo = require('../models/todo')
 const mongoose = require("mongoose")
+const User = require('../models/user')
+
 
 const createTodo = async (req, res) => {
-    const { title, assignTo, priority, tasks, dueDate,createdBy } = req.body;
-
+    const { title, assignTo, priority, tasks, dueDate, createdBy } = req.body;
+  
     try {
-        const newTodo = new Todo({
-            title,
-            assignTo,
-            priority,
-            tasks,
-            dueDate: new Date(dueDate),
-            mongoose.Schema.Types.ObjectId(createdBy),
-        });
-
-        const savedTodo = await newTodo.save();
-        res.status(201).json(savedTodo);
+      const newTodo = await Todo.create({
+        title,
+        assignTo,
+        priority,
+        tasks,
+        dueDate,
+        createdBy 
+      });
+  
+      res.status(201).json(newTodo);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Failed to create Todo', error: error.message });
+      console.error('Failed to create todo:', error);
+      res.status(500).json({ error: 'Failed to create todo' });
     }
-};
-
-
+  };
+  
+  
 
 const getAllTodo = async (req, res) => {
 
     try {
-        const allTodos = await Todo.find();
+        const { id } = req.params;
+        const allTodos = await Todo.find({ createdBy: req.userId });
+
+        console.log(`User ID: ${req.userId}`); 
+        console.log(`Todo ID from params: ${id}`);
+        console.log(`All Todos:`, allTodos); 
         res.status(200).json(allTodos);
 
     } catch (error) {
@@ -41,7 +47,8 @@ const getTodoById = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const result = await Todo.findOne({ _id: id });
+        console.log(_id  , req.userId)
+        const result = await Todo.findOne({ _id: id, createdBy: req.userId });
 
         if (result) {
             res.status(200).json(result);
@@ -77,7 +84,7 @@ const updateTodo = async (req, res) => {
     try {
         const { id } = req.params;
         const updatedFields = req.body;
-        const result = await Todo.updateOne({ _id: id }, { $set: updatedFields });
+        const result = await Todo.updateOne({ _id: id, createdBy: req.userId }, { $set: updatedFields });
 
         if (result.n === 0) {
             throw new Error('Task not found or no changes made');
@@ -95,7 +102,8 @@ const updateTodo = async (req, res) => {
 const deleteTodo = async (req, res) => {
     try {
         const { id } = req.params;
-        await Todo.deleteOne({ _id: id })
+        // await Todo.deleteOne({ _id: id })
+        await Todo.deleteOne({ _id: id, createdBy: req.userId });
         res.status(200).json({ message: "Todo Deleted succesfully" })
     } catch (error) {
         res.status(500).json({ message: "Failed to create todo" })
@@ -106,11 +114,3 @@ const deleteTodo = async (req, res) => {
 module.exports = { createTodo, getTodoById, getAllTodo, updateTodo, deleteTodo };
 
 
-
-index [
-   name:"anme",
-   age: 20,
-   address: "address",
-]
-
-index[1]

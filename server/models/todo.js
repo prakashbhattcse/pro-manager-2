@@ -6,40 +6,26 @@ const todoSchema = new mongoose.Schema({
         required: true
     },
     assignTo: {
-        type: String,
-        required: false
+        type: String
     },
     priority: {
         type: String,
         required: true
     },
-    tasks: [{
-        text: {
-            type: String,
-            required: true
-        },
-        completed: {
-            type: Boolean,
-            default: false
+    tasks: [
+        {
+            text: String,
+            completed: Boolean
         }
-    }],
-    dueDate: {
-        type: Date,
-        required: false
-    },
+    ],
+    dueDate: { type: Date },
     status: {
         type: String,
         default: 'To Do',
         required: false
     },
-    createdBy: {
-        type: String,
-        required: true    
-    }
-},
-
-    { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
-
-);
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false }, // Optional
+    createdAt: { type: Date, default: Date.now }
+});
 
 module.exports = mongoose.model("Todo", todoSchema);

@@ -16,7 +16,6 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
     setEditModal(!editModal)
   }
 
-
   return (
     <div className={style.todoCard}>
       <div className={style.spaceBtwn}>
@@ -51,17 +50,9 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
           <div className={style.checboxCardWrap2}>
             {todo?.tasks?.map((task, taskIndex) => (
               <div key={taskIndex} className={style.taskBorder}>
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => handleTaskToggleMain(index, taskIndex)}
+                <input type="checkbox" checked={task.completed} onChange={() => handleTaskToggleMain(index, taskIndex)}
                 />
-                <input
-                  type="text"
-                  value={task.text}
-                  onChange={(e) => handleTaskChange(taskIndex, e.target.value)}
-                  id={style.taskInput}
-                  placeholder='Add a Task'
+                <input type="text" value={task.text} onChange={(e) => handleTaskChange(taskIndex, e.target.value)} id={style.taskInput} placeholder='Add a Task'
                 />
               </div>
             ))}

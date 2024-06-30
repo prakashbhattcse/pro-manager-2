@@ -207,8 +207,10 @@ const Board = () => {
 
   const handleDeleteClick = async (id) => {
     const result = await deleteTodo(id);
+    console.log("id2")
+    console.log(id)
     if (result) {
-      setTodos(todos.filter((todo) => todo.id !== id)); // Ensure todos[index] is defined
+      setTodos(todos.filter((todo) => todo.id !== id));
       toast.success('Todo deleted successfully!');
     }
     fetchData();
@@ -233,11 +235,14 @@ const Board = () => {
       });
   };
 
+
+  
   const fetchData = async() => {
     let id = localStorage.getItem("userId")
     let res = await getUserTodoById(id);
     if(res.data){
       setData(res.data)
+      setTodos(res.data);
     }
     return;
   }

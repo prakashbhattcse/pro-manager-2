@@ -63,9 +63,9 @@ export const updateUser = async (userId, { name, updateEmail, oldPassword, newPa
 };
 
 
-export const getUser = async (id) => {
+export const getUser = async (userId) => {
     try {
-        const reqUrl = `${api_url}/getUser/${id}`;
+        const reqUrl = `${api_url}/getUser/${userId}`;
         console.log("Fetching user data from:", reqUrl);
         const result = await axios.get(reqUrl)
 

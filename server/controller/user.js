@@ -135,7 +135,7 @@ const getUser = async (req, res) => {
 
     try {
         const { id } = req.params;
-        const result = await Todo.find({ createdBy: id });
+        const result = await User.find({ createdBy: id });
         if (result) {
             res.status(200).json({data : result});
         } else {

@@ -42,7 +42,7 @@ export const loginUser = async ({ email, password }) => {
 
 
 
-export const updateUser = async (userId, { name, updateEmail, oldPassword, newPassword,emails }) => {
+export const updateUser = async (userId, { name, updateEmail, oldPassword, newPassword, emails }) => {
 
     console.log(userId)
     console.log()
@@ -63,16 +63,16 @@ export const updateUser = async (userId, { name, updateEmail, oldPassword, newPa
 };
 
 
-export const getUser = async(id)=>{
+export const getUser = async (id) => {
     try {
         const reqUrl = `${api_url}/getUser/${id}`;
-
+        console.log("Fetching user data from:", reqUrl);
         const result = await axios.get(reqUrl)
 
-     console.log(result)
-            return result.data
-    
-    }catch(error){
+        console.log(result.data)
+        return result.data
+
+    } catch (error) {
         console.log(error)
     }
 }

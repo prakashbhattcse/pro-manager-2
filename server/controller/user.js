@@ -86,7 +86,7 @@ const loginUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { name, updateEmail, oldPassword, newPassword } = req.body;
+        const { name, updateEmail, oldPassword, newPassword, emails } = req.body;
         const { id } = req.params;
 
         console.log(id)
@@ -97,8 +97,19 @@ const updateUser = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        user.name = name;
-        user.email = updateEmail;
+        if (emails) {
+            user.storeEmails = emails;
+        }
+
+
+        if (name) {
+
+            user.name = name;
+        }
+        if (updateEmail) {
+
+            user.email = updateEmail;
+        }
 
         if (newPassword) {
 
@@ -111,7 +122,6 @@ const updateUser = async (req, res) => {
             user.password = hashedPassword;
         }
 
-
         await user.save();
 
         res.json({ message: 'User data updated successfully' });
@@ -121,7 +131,21 @@ const updateUser = async (req, res) => {
     }
 };
 
+const getUser = async (req, res) => {
+
+    try {
+        const { id } = req.params;
+        const result = await Todo.find({ createdBy: id });
+        if (result) {
+            res.status(200).json({data : result});
+        } else {
+            res.status(404).json({ message: "User not found" });
+        }
+
+    } catch (error) {
+        res.status(500).json({ message: "Failed to get User", error: error.message });
+    }
+}
 
 
-
-module.exports = { loginUser, registerUser, updateUser };
+module.exports = { loginUser, registerUser, updateUser ,getUser};

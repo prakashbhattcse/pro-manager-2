@@ -1,7 +1,20 @@
 import React from 'react';
 import style from "./Board.module.css";
+import { MdDelete } from "react-icons/md";
 
-const TodoModal = ({ modalData, modalInputChange, handlePriorityClick, handleTaskChange, handleTaskToggle, handleAddTask, handleCancel, handleSave }) => {
+
+
+const TodoModal = ({ emails, modalData, modalInputChange, handlePriorityClick, handleTaskChange, handleTaskToggle, handleAddTask, handleCancel, handleSave, handleTaskDelete }) => {
+
+    const handleAssignToChange = (event) => {
+        modalInputChange({
+            target: {
+                name: 'assignTo',
+                value: event.target.value,
+            },
+        });
+    };
+
     return (
         <div className={style.modalSection}>
             <div className={style.modal}>
@@ -39,8 +52,12 @@ const TodoModal = ({ modalData, modalInputChange, handlePriorityClick, handleTas
 
                 <div className={style.spaceBtwn}>
                     <label htmlFor="assignTo">Assign To</label>
-                    <input type="text" placeholder='Add a assignee' name="assignTo" id="assignTo" value={modalData.assignTo} onChange={modalInputChange}
-                    />
+                    <select name="assignTo" id="assignTo" value={modalData.assignTo || ''} onChange={handleAssignToChange}>
+                        <option value="" disabled>Select an assignee</option>
+                        {emails.map((email, index) => (
+                            <option key={index} value={email}>{email}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div style={{ minHeight: "13rem" }}>
@@ -51,8 +68,9 @@ const TodoModal = ({ modalData, modalInputChange, handlePriorityClick, handleTas
                             <div key={index} className={style.taskBorder} >
                                 <input type="checkbox" checked={task.completed} onChange={() => handleTaskToggle(index)}
                                 />
-                                <input type="text" value={task.text} onChange={(e) => handleTaskChange(index, e.target.value)} id={style.taskInput} placeholder='Add a Task'
+                                <input type="text" style={{ width: "90%" }} value={task.text} onChange={(e) => handleTaskChange(index, e.target.value)} id={style.taskInput} placeholder='Add a Task'
                                 />
+                                <MdDelete onClick={() => handleTaskDelete(index)} style={{ color: "red" }} />
                             </div>
                         ))}
                     </div>

@@ -42,17 +42,18 @@ export const loginUser = async ({ email, password }) => {
 
 
 
-export const updateUser = async (userId, { name, updateEmail, oldPassword, newPassword }) => {
+export const updateUser = async (userId, { name, updateEmail, oldPassword, newPassword,emails }) => {
 
     console.log(userId)
     console.log()
     try {
         const reqUrl = `${api_url}/update/${userId}`;
-        const response = await axios.put(reqUrl, {
+        const response = await axios.patch(reqUrl, {
             name,
             updateEmail,
             oldPassword,
             newPassword,
+            emails,
         });
         return response.data;
     } catch (error) {
@@ -60,3 +61,18 @@ export const updateUser = async (userId, { name, updateEmail, oldPassword, newPa
         throw error;
     }
 };
+
+
+export const getUser = async(id)=>{
+    try {
+        const reqUrl = `${api_url}/getUser/${id}`;
+
+        const result = await axios.get(reqUrl)
+
+     console.log(result)
+            return result.data
+    
+    }catch(error){
+        console.log(error)
+    }
+}

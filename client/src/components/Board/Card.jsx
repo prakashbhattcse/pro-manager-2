@@ -21,7 +21,9 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
       <div className={style.spaceBtwn}>
         <div style={{display:"flex", gap:".7rem",alignItems:"center"}}>
           <p>{todo.priority}</p>
-          <p style={{backgroundColor:"#FFEBEB", borderRadius:"50%",height:"30px",width:"30px",display:"flex",justifyContent:"center",alignItems:"center"}}>{todo.assignTo.slice(0, 2).toUpperCase()}</p>
+          <p style={{ backgroundColor: "#FFEBEB", borderRadius: "50%", height: "30px", width: "30px", display: "flex", justifyContent: "center", alignItems: "center" }}>
+             {todo.assignTo && todo.assignTo.length > 0 ? todo.assignTo.slice(0, 2).toUpperCase() : "NA"}
+          </p>
         </div>
         <span>
 
@@ -42,11 +44,11 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
       <div className={style.checboxCardWrap}>
         <div className={style.dropdownIconText}>
           <p>Checklist: {todo.tasks.filter(task => task.completed).length}/{todo.tasks.length}</p>
-          <span onClick={() => toggleDropdown(index)}>
-            {dropdown[index] ? <BsFillArrowUpSquareFill /> : <BsFillArrowDownSquareFill />}
+          <span onClick={() => toggleDropdown(todo._id)}>
+            {dropdown[todo._id] ? <BsFillArrowUpSquareFill /> : <BsFillArrowDownSquareFill />}
           </span>
         </div>
-        {dropdown[index] && (
+        {dropdown[todo._id] && (
           <div className={style.checboxCardWrap2}>
             {todo?.tasks?.map((task, taskIndex) => (
               <div key={taskIndex} className={style.taskBorder}>

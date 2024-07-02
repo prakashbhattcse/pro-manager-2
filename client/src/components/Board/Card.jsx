@@ -1,5 +1,5 @@
 import style from "./Board.module.css";
-import { React, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import moment from 'moment';
 import { BsFillArrowDownSquareFill, BsFillArrowUpSquareFill } from "react-icons/bs";
 import { HiDotsHorizontal } from "react-icons/hi";
@@ -15,6 +15,12 @@ const Card = ({ todo, index, dropdown, toggleDropdown, handleTaskToggleMain, han
   const toggleEditModal = () => {
     setEditModal(!editModal)
   }
+
+  useEffect(()=>{
+    setTimeout(()=>{
+      setEditModal(false);
+    },9000)
+  },[editModal])
 
   return (
     <div className={style.todoCard}>

@@ -96,7 +96,9 @@ const Board = () => {
           index === todoIndex ? { ...todo, tasks: updatedTodo.tasks } : todo
         )
       );
+      setModal(false);
       toast.success('Task updated successfully!');
+   
     } catch (error) {
       console.error('Failed to update task status:', error);
       toast.error('Failed to update task.');
@@ -123,7 +125,7 @@ const Board = () => {
         const res = await updateTodo(id, modalData);
          if(res){
           setRefresh(true);
-
+        setModal(false);
         toast.success('Task updated successfully');
         return
          }

@@ -12,19 +12,23 @@
 }
 
 .containerWrap {
-  width: 100%;
+  width: 70%;
   display: flex;
-  gap: 2rem;
+  gap: 7rem;
   padding-top: 2rem;
 
 ul{
     display: flex;
     gap: 1.2rem;
     flex-direction: column;
+    width: 50%;
 }
 
   ul li {
     list-style: none;
+    display: flex;
+    align-items: center;
+  justify-content: space-between;
   }
 }
 
@@ -42,7 +46,7 @@ border-radius: 12px;
 
   li p{
     display: flex;
-    gap: 1rem;
+    /* gap: 2rem; */
     align-items: center;
   }
 
@@ -56,6 +60,7 @@ border-radius: 12px;
   background-color: #90c4cc;
   color: #90c4cc;
   display: inline-block;
+  margin-right: 1rem;
 }
 
 .label {

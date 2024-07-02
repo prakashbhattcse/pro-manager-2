@@ -26,7 +26,7 @@ export const getAllTodo = async (req, res) => {
     try {
         const reqUrl = `${link}/getAllTodo`;
         const response = await axios.get(reqUrl);
-        console.log(response.data)
+
         return response.data;
     } catch (error) {
 

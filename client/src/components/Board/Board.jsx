@@ -5,19 +5,24 @@ import { CiSquareMinus } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
 import TodoModal from './TodoModal';
 import { createTodo, getAllTodo, updateTodo, deleteTodo, getUserTodoById } from '../../apis/todo';
+import { updateUser ,getUser} from '../../apis/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Card from './Card';
+import { PiUsers } from "react-icons/pi";
 
 const Board = () => {
   const userName = localStorage.getItem("name") || "User";
   const currentDate = new Date();
   const formattedDate = moment(currentDate).format("Do MMM, YYYY");
   const [todos, setTodos] = useState([]);
-  const [data , setData] = useState();
-  const [refresh , setRefresh] = useState(false);
+  const [data, setData] = useState();
+  const [refresh, setRefresh] = useState(false);
   const [modal, setModal] = useState(false);
   const [dropdown, setDropdown] = useState({});
+  const [filterOption, setFilterOption] = useState('option1'); // New state for filter option
+  const [addPeopleModal, setAddPeopleModal] = useState(false)
+
   const [modalData, setModalData] = useState({
     title: '',
     assignTo: '',
@@ -27,6 +32,26 @@ const Board = () => {
   });
   const [currentTodo, setCurrentTodo] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [emails, setEmails] = useState([]);
+  const [newEmail, setNewEmail] = useState('');
+
+
+  const handleUpdate = async()=>{
+    if(newEmail){
+      setEmails((prevEmails) => {
+        return [...prevEmails, newEmail];
+      });
+    }
+    console.log("hello update")
+    const userId = localStorage.getItem("userId");
+    const response = await updateUser(userId, {emails: [...emails, newEmail]});
+    console.log(emails)
+
+    if(!response){
+      toast.error("Failed to update email");
+    }
+
+  }
 
   const toggleDropdown = (index) => {
     setDropdown((prevDropdown) => ({
@@ -45,7 +70,20 @@ const Board = () => {
     }
   };
 
-  useEffect(() => {   
+
+
+  const fetchUser = async () => {
+    try {
+      const userId = localStorage.getItem("userId"); 
+      const userData = await getUser(userId); 
+      setEmails(Object.values(userData.data[0].storeEmails)); 
+    } catch (error) {
+      console.error("Failed to fetch user:", error);
+    }
+  };
+
+
+  useEffect(() => {
     fetchTodos();
   }, []);
 
@@ -105,33 +143,36 @@ const Board = () => {
     }
   };
 
+
+
+
   const handleSave = async () => {
-  if(isEditing){
     if (!modalData.title || !modalData.priority || modalData.tasks.length === 0) {
       toast.error('Please fill in all required fields');
       return;
     }
-  }
-  else{
-    if (!modalData.title || !modalData.priority || modalData.tasks.length === 0) {
-      toast.error('Please fill in all required fields');
-      return;
+
+    // Check if all tasks have text
+    for (let task of modalData.tasks) {
+      if (!task.text) {
+        toast.error('All tasks must have text');
+        return;
+      }
     }
-  }
     try {
       if (isEditing) {
         console.log(modalData)
         let id = modalData._id;
         const res = await updateTodo(id, modalData);
-         if(res){
+        if (res) {
           setRefresh(true);
-        setModal(false);
-        toast.success('Task updated successfully');
-        return
-         }
+
+          toast.success('Task updated successfully');
+          return
+        }
       } else {
         const newTodo = await createTodo({
-          
+
           ...modalData,
           status: 'Backlog',
           createdBy: localStorage.getItem("userId"),
@@ -152,7 +193,7 @@ const Board = () => {
       });
       setIsEditing(false);
       setCurrentTodo(null);
-        } catch (error) {
+    } catch (error) {
       console.error('Failed to save task:', error);
       toast.error('Failed to save task');
     }
@@ -171,23 +212,33 @@ const Board = () => {
     setCurrentTodo(null);
   };
 
+
+  const handleTaskDelete = (index) => {
+    const updatedTasks = modalData.tasks.filter((_, taskIndex) => taskIndex !== index);
+    setModalData((prevData) => ({
+      ...prevData,
+      tasks: updatedTasks,
+    }));
+  };
+
+
   const handleStatusChange = async (todo, newStatus) => {
 
     console.log(todo)
     console.log(newStatus)
-  
+
     const updatedTodo = { ...todo, status: newStatus };
     // setModalData(updatedTodo);
-  
+
     try {
       let id = updatedTodo._id;
       await updateTodo(id, updatedTodo);
       toast.success('Status updated successfully!');
-      fetchData(); 
+      fetchData();
     } catch (error) {
       toast.error('Failed to update status.');
-    }
-  };
+    }
+  };
   const handleModalOpen = () => {
     setIsEditing(false);
     setModalData({
@@ -238,20 +289,44 @@ const Board = () => {
   };
 
 
-  
-  const fetchData = async() => {
+  const filterTodos = (todos, option) => {
+    const now = moment();
+    switch (option) {
+      case 'option1':
+        return todos.filter(todo => moment(todo.createdAt).isSame(now, 'day'));
+      case 'option2':
+        return todos.filter(todo => moment(todo.createdAt).isSame(now, 'week'));
+      case 'option3':
+        return todos.filter(todo => moment(todo.createdAt).isSame(now, 'month'));
+      default:
+        return todos;
+    }
+  };
+
+
+
+
+
+
+  const filteredTodos = filterTodos(todos, filterOption);
+
+  const fetchData = async () => {
     let id = localStorage.getItem("userId")
     let res = await getUserTodoById(id);
-    if(res.data){
+    if (res.data) {
+      console.log(res.data)
       setData(res.data)
       setTodos(res.data);
     }
     return;
   }
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchData();
-  },[setRefresh , modalData , refresh])
+    fetchUser()
+    console.log("data")
+    console.log(modalData)
+  }, [])
 
   return (
     <div className={style.section}>
@@ -262,13 +337,28 @@ const Board = () => {
 
       <div className={style.box2}>
         <div className={style.box1}>
-          <h2>Board</h2>
-          <select>
+          <div style={{ display: "flex", alignItems: "center", gap: "1.3rem", cursor: "pointer" }}><h2>Board</h2><p onClick={() => setAddPeopleModal(true)}><PiUsers />Add People</p></div>
+          <select onChange={(e) => setFilterOption(e.target.value)}>
             <option value="option1">Today</option>
             <option value="option2">This Week</option>
             <option value="option3">This Month</option>
           </select>
         </div>
+
+
+        {addPeopleModal &&
+          <div className={style.modalSection}>
+            <div className={style.addPeoplemodalContainer}>
+              <h2>Add People to the Board</h2>
+              <input type="email" placeholder='Enter the email' value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)} />
+              <div className={style.peopleBtnWrap}>
+                <button className={style.cancelBtn} onClick={() => setAddPeopleModal(false)}>Cancel</button>
+                <button className={style.saveBtn} onClick={()=>handleUpdate()}>Add Email</button>
+              </div>
+            </div>
+          </div>}
+
 
         <div className={style.dataSection}>
           <div className={style.dataBox}>
@@ -278,23 +368,10 @@ const Board = () => {
             </div>
             {/* Backlog CARDS */}
             <div className={style.dataCardWrap}>
-          
-              {data?.map((todo, index) => (
-                todo.status === 'Backlog' && (
-                  <Card
-                    key={todo._id}
-                    todo={todo}
-                    index={index}
-                    dropdown={dropdown}
-                    toggleDropdown={toggleDropdown}
-                    handleTaskToggleMain={handleTaskToggleMain}
-                    handleTaskChange={handleTaskChange}
-                    handleStatusChange={handleStatusChange}
-                    handleEditClick={handleEditClick}
-                    handleDeleteClick={handleDeleteClick}
-                    handleShareClick={handleShareClick}
-                  />
-                )
+
+              {filteredTodos.filter(todo => todo.status === 'Backlog').map((todo, index) => (
+                <Card key={todo._id} todo={todo} index={index} dropdown={dropdown} toggleDropdown={toggleDropdown} handleTaskToggleMain={handleTaskToggleMain} handleTaskChange={handleTaskChange} handleStatusChange={handleStatusChange} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} handleShareClick={handleShareClick}
+                />
               ))}
 
 
@@ -313,23 +390,11 @@ const Board = () => {
             <ToastContainer />
             {/* CARD SECTION START */}
             <div className={style.dataCardWrap}>
-              {data?.map((todo, index) => (
-                todo.status === 'To Do' && (
-                  <Card
-                    key={todo._id}
-                    todo={todo}
-                    index={index}
-                    dropdown={dropdown}
-                    toggleDropdown={toggleDropdown}
-                    handleTaskToggleMain={handleTaskToggleMain}
-                    handleTaskChange={handleTaskChange}
-                    handleStatusChange={handleStatusChange}
-                    handleEditClick={handleEditClick}
-                    handleDeleteClick={handleDeleteClick}
-                    handleShareClick={handleShareClick}
-                  />
-                )
+              {filteredTodos.filter(todo => todo.status === 'To Do').map((todo, index) => (
+                <Card key={todo._id} todo={todo} index={index} dropdown={dropdown} toggleDropdown={toggleDropdown} handleTaskToggleMain={handleTaskToggleMain} handleTaskChange={handleTaskChange} handleStatusChange={handleStatusChange} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} handleShareClick={handleShareClick}
+                />
               ))}
+
             </div>
           </div>
           {/* CARD SECTION END */}
@@ -341,22 +406,10 @@ const Board = () => {
             </div>
             {/* IN PROGRESS CARDS */}
             <div className={style.dataCardWrap}>
-              {data?.map((todo, index) => (
-                todo.status === 'Progress' && (
-                  <Card
-                    key={todo._id}
-                    todo={todo}
-                    index={index}
-                    dropdown={dropdown}
-                    toggleDropdown={toggleDropdown}
-                    handleTaskToggleMain={handleTaskToggleMain}
-                    handleTaskChange={handleTaskChange}
-                    handleStatusChange={handleStatusChange}
-                    handleEditClick={handleEditClick}
-                    handleDeleteClick={handleDeleteClick}
-                    handleShareClick={handleShareClick}
-                  />
-                )
+              {filteredTodos.filter(todo => todo.status === 'Progress').map((todo, index) => (
+                <Card key={todo._id} todo={todo} index={index} dropdown={dropdown} toggleDropdown={toggleDropdown} handleTaskToggleMain={handleTaskToggleMain} handleTaskChange={handleTaskChange} handleStatusChange={handleStatusChange} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} handleShareClick={handleShareClick}
+                />
+
               ))}
             </div>
           </div>
@@ -368,23 +421,11 @@ const Board = () => {
             </div>
             {/* DONE CARDS */}
             <div className={style.dataCardWrap}>
-              {data?.map((todo, index) => (
-                todo.status === 'Done' && (
+              {filteredTodos.filter(todo => todo.status === 'Done').map((todo, index) => (
 
-                  <Card
-                    key={todo._id}
-                    todo={todo}
-                    index={index}
-                    dropdown={dropdown}
-                    toggleDropdown={toggleDropdown}
-                    handleTaskToggleMain={handleTaskToggleMain}
-                    handleTaskChange={handleTaskChange}
-                    handleStatusChange={handleStatusChange}
-                    handleEditClick={handleEditClick}
-                    handleDeleteClick={handleDeleteClick}
-                    handleShareClick={handleShareClick}
-                  />
-                )
+                <Card key={todo._id} todo={todo} index={index} dropdown={dropdown} toggleDropdown={toggleDropdown} handleTaskToggleMain={handleTaskToggleMain} handleTaskChange={handleTaskChange} handleStatusChange={handleStatusChange} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} handleShareClick={handleShareClick}
+                />
+
               ))}
             </div>
           </div>
@@ -392,17 +433,7 @@ const Board = () => {
       </div>
 
       {modal && (
-        <TodoModal
-          modalData={modalData}
-          modalInputChange={modalInputChange}
-          handlePriorityClick={handlePriorityClick}
-          handleTaskChange={handleTaskChange}
-          handleTaskToggle={handleTaskToggle}
-          handleAddTask={handleAddTask}
-          setModal={setModal}
-          handleCancel={handleCancel}
-          handleSave={handleSave}
-          isEditing={isEditing}
+        <TodoModal modalData={modalData} emails={emails} modalInputChange={modalInputChange} handlePriorityClick={handlePriorityClick} handleTaskChange={handleTaskChange} handleTaskToggle={handleTaskToggle} handleAddTask={handleAddTask} setModal={setModal} handleCancel={handleCancel} handleSave={handleSave} isEditing={isEditing} handleTaskDelete={handleTaskDelete}
         />
       )}
     </div>

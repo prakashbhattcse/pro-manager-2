@@ -61,13 +61,15 @@ const getUserTodoById = async (req, res) => {
 
     try {
         const { id } = req.params;
+        const userDetails = await User.findOne({ _id: id });
+        const findEmail = userDetails.email;
         const result = await Todo.find({ createdBy: id });
-        if (result) {
-            res.status(200).json({data : result});
+        const anotherResult = await Todo.find({ assignTo: findEmail});
+        if (result  || anotherResult) {
+            res.status(200).json({data : [...result,...anotherResult]});
         } else {
             res.status(404).json({ message: "Todo not found" });
         }
-
     } catch (error) {
         res.status(500).json({ message: "Failed to get Todo", error: error.message });
     }

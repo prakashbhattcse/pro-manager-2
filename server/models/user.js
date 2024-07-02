@@ -16,8 +16,10 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
-
+    },
+    storeEmails: {
+        type: Array
+    },
 },
     { timestamps: { createdAt: "Created At", updatedAt: "Updated At"} }
 

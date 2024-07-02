@@ -14,8 +14,13 @@ const todoSchema = new mongoose.Schema({
     },
     tasks: [
         {
-            text: String,
-            completed: Boolean
+            text: {
+                type: String,
+                required: true
+            },
+            completed: {
+                type: Boolean
+            }
         }
     ],
     dueDate: { type: Date },
@@ -24,6 +29,7 @@ const todoSchema = new mongoose.Schema({
         default: 'To Do',
         required: false
     },
+
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false }, // Optional
     createdAt: { type: Date, default: Date.now }
 });

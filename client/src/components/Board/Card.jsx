@@ -189,6 +189,13 @@ const Card = ({
     }
   };
 
+  const onDelete = (id) => {
+    const success = handleDeleteClick(id);
+    if (!success) {
+      toast.error("You can't delete this card. Not authorized.");
+    }
+  };
+
 
   return (
     <div className={style.todoCard}>

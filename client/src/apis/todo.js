@@ -49,7 +49,8 @@ export const updateTodo = async (id , editData) => {
     try {
         console.log(id)
         const reqUrl = `${link}/updateTodo/${id}`;
-        const response = await axios.put(reqUrl, {id, editData});
+        let userId = localStorage.getItem("userId");
+        const response = await axios.put(reqUrl, {id, editData, userId});
 
         return response.data;
     } catch (error) {
@@ -61,7 +62,8 @@ export const updateTodo = async (id , editData) => {
 
 export const deleteTodo = async (id) => {
     try {
-        const reqUrl = `${link}/deleteTodo/${id}`;
+        let userId = localStorage.getItem("userId");
+        const reqUrl = `${link}/deleteTodo/${id}/${userId}`;
         const response = await axios.delete(reqUrl);
 
         if (response.data.message) {

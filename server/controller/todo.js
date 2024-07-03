@@ -66,7 +66,7 @@ const getUserTodoById = async (req, res) => {
         const result = await Todo.find({ createdBy: id });
         const anotherResult = await Todo.find({ assignTo: findEmail});
         if (result  || anotherResult) {
-            res.status(200).json({data : [...result,...anotherResult]});
+            res.status(200).json({data : [...result , ...anotherResult]});
         } else {
             res.status(404).json({ message: "Todo not found" });
         }
@@ -78,7 +78,7 @@ const getUserTodoById = async (req, res) => {
 const updateTodo = async (req, res) => {
     try {
         const { id } = req.params;
-        const { title, assignTo, priority, tasks, dueDate, status, createdBy } = req.body.editData;
+        const { title, assignTo, priority, tasks, dueDate, status, createdBy , userId} = req.body.editData;
 
         // Construct the update object using $set operator
         const updateObject = {
@@ -91,18 +91,33 @@ const updateTodo = async (req, res) => {
             createdBy
         };
 
+        let ogData = await Todo.findOne({_id : id});
+        if (ogData.assignTo != assignTo){
+            const result = await Todo.updateOne({ _id: id , createdBy : userId}, { $set: updateObject });
+            if (!result) {
+                return;
+            }
+    
+            // Fetch the updated todo item
+            const updatedTodo = await Todo.findById(id);
+    
+            res.status(200).json(updatedTodo);
+        }
+        
+        else{
         // Update the todo item in MongoDB using updateOne
         const result = await Todo.updateOne({ _id: id }, { $set: updateObject });
-
+        
         // Check if no document matched the query
-        if (result.n === 0) {
-            throw new Error('Task not found or no changes made');
+        if (!result) {
+            return;
         }
 
         // Fetch the updated todo item
         const updatedTodo = await Todo.findById(id);
 
         res.status(200).json(updatedTodo);
+    }
     } catch (error) {
         console.error('Failed to update task:', error);
         res.status(500).json({ message: 'Internal server error' });
@@ -112,14 +127,29 @@ const updateTodo = async (req, res) => {
 
 const deleteTodo = async (req, res) => {
     try {
-        const { id } = req.params;
-        // await Todo.deleteOne({ _id: id })
-        await Todo.deleteOne({ _id: id });
-        res.status(200).json({ message: "Todo Deleted succesfully" })
+        const { id, userId } = req.params;
+        
+        // Validate if id and userId are valid ObjectId
+        if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: "Invalid id or userId format" });
+        }
+
+        // Delete the Todo document where _id and createdBy match
+        const result = await Todo.deleteOne({ _id: id, createdBy: userId });
+
+        // Check if the deletion was successful
+        if (result.deletedCount === 0) {
+            return res.status(404).json({ message: "Todo not found or unauthorized" });
+        }
+
+        // Respond with success message
+        res.status(200).json({ message: "Todo deleted successfully" });
     } catch (error) {
-        res.status(500).json({ message: "Failed to create todo" })
+        console.error("Error deleting todo:", error);
+        res.status(500).json({ message: "Failed to delete todo" });
     }
-}
+};
+
 
 
 module.exports = { createTodo, getTodoById, getUserTodoById,getAllTodo, updateTodo, deleteTodo };

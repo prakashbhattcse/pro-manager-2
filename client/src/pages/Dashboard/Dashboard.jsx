@@ -77,8 +77,7 @@ const onCancel = ()=>{
             </div>
           </div>
 
-          <button onClick={()=>setConfirmLogoutModal(true)}><IoExitOutline />Logout</button>
-
+          <button style={{height:'10vh' , padding:'0' , display:'flex' , justifyContent:'center'}} onClick={()=>setConfirmLogoutModal(true)}><IoExitOutline />Logout</button>
 
           {confirmLogoutModal &&
           (

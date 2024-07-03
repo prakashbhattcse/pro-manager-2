@@ -5,6 +5,7 @@ import moment from 'moment';
 import style from "../../components/Board//Board.module.css"
 import { useParams } from 'react-router-dom';
 import { getTodoById } from "../../apis/todo"
+import {ScaleLoader} from 'react-spinners';
 
 const TodoPage = () => {
 
@@ -31,11 +32,14 @@ const TodoPage = () => {
 
         setTimeout(() => {
             fetchTodo();
-        }, 500)
+        }, 1200)
     }, [id]);
 
     if (!todo) {
-        return <p>Loading...</p>;
+        return (
+        <div className={style1.spinner}>
+        <ScaleLoader color='red' />
+        </div>)
     }
 
     const formattedDate = moment(todo.currentDate).format("MMM Do");
@@ -86,7 +90,7 @@ const TodoPage = () => {
                         </div>
                     </div>
                 </div>
-                : <h1>Loading...</h1>}
+                : <ScaleLoader />}
         </div>
     );
 };

@@ -140,6 +140,7 @@ const Card = ({
   const toggleEditModal = () => {
     setEditModal(!editModal);
   };
+  
 
   useEffect(() => {
     setTimeout(() => {

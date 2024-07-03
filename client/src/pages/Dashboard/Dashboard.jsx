@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import style from "./Dashboard.module.css"
+import style1 from "../../components/Board/Board.module.css"
 import logo from "../../assets/logo.png"
 import { MdOutlineSpaceDashboard } from "react-icons/md";
 import { GoDatabase } from "react-icons/go";
@@ -18,7 +19,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('board')
   const [data, setData] = useState('')
-
+const [confirmLogoutModal, setConfirmLogoutModal] = useState(false)
 
   useEffect(() => {
 
@@ -34,10 +35,16 @@ const Dashboard = () => {
 
 
    const handleLogout = () => {
+
+
     localStorage.removeItem('authToken');
 
     navigate('/');
 };
+
+const onCancel = ()=>{
+  setConfirmLogoutModal(false)
+}
 
 
   return (
@@ -70,7 +77,22 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <button onClick={handleLogout}><IoExitOutline />Logout</button>
+          <button onClick={()=>setConfirmLogoutModal(true)}><IoExitOutline />Logout</button>
+
+
+          {confirmLogoutModal &&
+          (
+            <div className={style1.modalSection}>
+              <div className={style1.addPeoplemodalContainer} style={{textAlign:"center"}}>
+                <h2>Are you sure you want to Logout?</h2>
+                <div className={style1.peopleBtnWrap} style={{display:'flex', flexDirection:"column",alignItems:"center"}}>
+                  <button className={style1.saveBtn} onClick={handleLogout} style={{ backgroundColor: '#17a2b8', border: 'none', fontSize: '1.2rem', color: 'white',cursor: 'pointer' ,display:"flex",alignItems:"center",justifyContent:"center"}}>Yes, Logout</button>
+                  <button className={style1.cancelBtn} onClick={onCancel} style={{ backgroundColor: 'transparent', border: '2px solid #cf3636', fontSize: '1.2rem', color: '#cf3636', cursor: 'pointer' ,display:"flex",alignItems:"center",justifyContent:"center"}} >Cancel</button>
+                </div>
+              </div>
+            </div>
+          )
+        }
         </div>
         <div className={style.tabDataSection}>
           {activeTab === "board" && <div><Board /></div>}

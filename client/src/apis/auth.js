@@ -1,4 +1,6 @@
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 const api_url = 'http://localhost:3000/api/v1/auth'
@@ -7,7 +9,7 @@ const api_url = 'http://localhost:3000/api/v1/auth'
 
 export const registerUser = async ({ name, email, password, confirmPassword }) => {
     try {
-        const reqUrl = `http://localhost:3000/api/v1/auth/register`;
+        const reqUrl = `${api_url}/register`;
         const response = await axios.post(reqUrl, {
             name,
             email,
@@ -18,10 +20,13 @@ export const registerUser = async ({ name, email, password, confirmPassword }) =
         return response.data;
     } catch (error) {
         console.log(error);
-        alert("Something went wrong!");
+        toast.error(error.response?.data?.message || "Something went wrong!", {
+            position: 'top-right',
+            autoClose: 2000,
+        });
+        return null;
     }
 };
-
 export const loginUser = async ({ email, password }) => {
     try {
         const reqUrl = `${api_url}/login`;
@@ -36,7 +41,11 @@ export const loginUser = async ({ email, password }) => {
         return response.data.name;
     } catch (error) {
         console.log(error);
-        alert("Something went wrong!");
+        toast.error(error.response?.data?.message || "Something went wrong!", {
+            position: 'top-right',
+            autoClose: 2000,
+        });
+        return null;
     }
 };
 

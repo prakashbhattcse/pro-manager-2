@@ -5,14 +5,29 @@ import { CiSquareMinus } from "react-icons/ci";
 import { FiPlus } from "react-icons/fi";
 import TodoModal from './TodoModal';
 import { createTodo, getAllTodo, updateTodo, deleteTodo, getUserTodoById } from '../../apis/todo';
-import { updateUser ,getUser} from '../../apis/auth';
+import { updateUser, getUser } from '../../apis/auth';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Card from './Card';
 import { PiUsers } from "react-icons/pi";
 
+
+
+
+
+const ConfirmModal = ({ onClose, email }) => (
+  <div className={style.modalSection}>
+    <div className={style.addPeoplemodalContainer} style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
+      <h2 style={{fontSize:"1.3rem"}}>{email} added to the board</h2>
+      <div className={style.peopleBtnWrap}>
+        <button className={style.saveBtn} onClick={onClose} style={{width:"11rem"}}>Okay, Got it</button>
+      </div>
+    </div>
+  </div>
+);
+
 const Board = () => {
-  const userName = localStorage.getItem("name") || "User";
+  const [userName, setUserName] = useState("User");
   const currentDate = new Date();
   const formattedDate = moment(currentDate).format("Do MMM, YYYY");
   const [todos, setTodos] = useState([]);
@@ -34,24 +49,26 @@ const Board = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [emails, setEmails] = useState([]);
   const [newEmail, setNewEmail] = useState('');
+  const [confirmModal, setConfirmModal] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
 
 
-  const handleUpdate = async()=>{
-    if(newEmail){
-      setEmails((prevEmails) => {
-        return [...prevEmails, newEmail];
-      });
+  const handleUpdate = async () => {
+    if (newEmail) {
+      setEmails((prevEmails) => [...prevEmails, newEmail]);
     }
-    console.log("hello update")
     const userId = localStorage.getItem("userId");
-    const response = await updateUser(userId, {emails: [...emails, newEmail]});
-    console.log(emails)
+    const response = await updateUser(userId, { emails: [...emails, newEmail] });
 
-    if(!response){
+    if (response) {
+      setUserEmail(newEmail)
+      setConfirmModal(true); 
+     setAddPeopleModal(false)
+    } else {
       toast.error("Failed to update email");
     }
+  };
 
-  }
 
   const toggleDropdown = (index) => {
     setDropdown((prevDropdown) => ({
@@ -74,9 +91,11 @@ const Board = () => {
 
   const fetchUser = async () => {
     try {
-      const userId = localStorage.getItem("userId"); 
-      const userData = await getUser(userId); 
-      setEmails(Object.values(userData.data[0].storeEmails)); 
+      const userId = localStorage.getItem("userId");
+      const userData = await getUser(userId);
+    
+      setUserName(userData.data[0].name);
+      setEmails(Object.values(userData.data[0].storeEmails));
     } catch (error) {
       console.error("Failed to fetch user:", error);
     }
@@ -136,7 +155,7 @@ const Board = () => {
       );
       setModal(false);
       toast.success('Task updated successfully!');
-   
+
     } catch (error) {
       console.error('Failed to update task status:', error);
       toast.error('Failed to update task.');
@@ -168,6 +187,7 @@ const Board = () => {
           setRefresh(true);
 
           toast.success('Task updated successfully');
+          setModal(false);
           return
         }
       } else {
@@ -260,11 +280,10 @@ const Board = () => {
 
   const handleDeleteClick = async (id) => {
     const result = await deleteTodo(id);
-    console.log("id2")
-    console.log(id)
+  
     if (result) {
+    
       setTodos(todos.filter((todo) => todo.id !== id));
-      toast.success('Todo deleted successfully!');
     }
     fetchData();
   };
@@ -275,13 +294,13 @@ const Board = () => {
 
     navigator.clipboard.writeText(linkToCopy)
       .then(() => {
-        toast.success('Quiz link copied to clipboard!', {
+        toast.success('Link Copied', {
           position: "top-right",
           autoClose: 2000
         });
       })
       .catch(err => {
-        toast.error('Failed to copy quiz link!', {
+        toast.error('Failed to copy', {
           position: "top-right",
           autoClose: 2000
         });
@@ -305,11 +324,10 @@ const Board = () => {
 
 
 
-
-
-
   const filteredTodos = filterTodos(todos, filterOption);
 
+
+  
   const fetchData = async () => {
     let id = localStorage.getItem("userId")
     let res = await getUserTodoById(id);
@@ -354,11 +372,12 @@ const Board = () => {
                 onChange={(e) => setNewEmail(e.target.value)} />
               <div className={style.peopleBtnWrap}>
                 <button className={style.cancelBtn} onClick={() => setAddPeopleModal(false)}>Cancel</button>
-                <button className={style.saveBtn} onClick={()=>handleUpdate()}>Add Email</button>
+                <button className={style.saveBtn}  onClick={() => handleUpdate()}>Add Email</button>
               </div>
             </div>
           </div>}
 
+        {confirmModal && <ConfirmModal onClose={() => setConfirmModal(false)} email={newEmail} />}
 
         <div className={style.dataSection}>
           <div className={style.dataBox}>

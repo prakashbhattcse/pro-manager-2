@@ -108,6 +108,29 @@
   color: red;
 }
 
+
+.assignInput{
+  width: 80%;
+  padding: 8px 15px;
+  border: 2px solid #D9D9D9;
+  outline: none;
+  font-size: 17px;
+
+
+  option button{
+    padding: 6px 14px;
+    border: 2px solid #D9D9D9;
+  }
+
+
+  option{
+    padding: 8px 15px;
+    height: 1rem;
+    display: flex;
+  justify-content: space-between;
+  }
+}
+
 /* CHIPS */
 
 .chipsLabel {
@@ -151,6 +174,19 @@
 }
 
 #greenCircle {
+  background-color: rgb(0, 255, 38);
+}
+
+
+.redCircle {
+  background-color: red;
+}
+
+.blueCircle {
+  background-color: rgb(0, 149, 255);
+}
+
+.greenCircle {
   background-color: rgb(0, 255, 38);
 }
 
@@ -242,6 +278,36 @@
 
 /* TODO CARDS */
 
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: auto;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 1px 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%; /* Position the tooltip above the text */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
 .dataCardWrap {
   display: flex;
   gap: 1rem;
@@ -251,7 +317,7 @@
   scrollbar-width: thin;
   scrollbar-color: #8daab9 #d6eaf4;
   margin-top: 1rem;
-  padding-bottom: 3rem;
+  padding: .7rem 0 3rem 0;
 }
 
 .todoCard {
@@ -265,7 +331,7 @@
   flex-direction: column;
   gap: 0.6rem;
   position: relative;
-  z-index: 1;
+  /* z-index: 1; */
 
   h4 {
     font-size: 1.3rem;
@@ -307,13 +373,22 @@
   height: auto;
 }
 
+@media (max-width: 600px) {
+  .checboxCardWrap {
+  
+    gap: 1.2rem;
+
+  }
+}
+
 .dataCardBtnWrap {
-  display: flex;
-  justify-content: space-between;
+  /* display: flex;
+  justify-content: space-between; */
 
   span {
     display: flex;
     gap: 5px;
+    float: right;
   }
 
   button {
@@ -383,3 +458,93 @@
 .addBtn{
 
 }
+
+
+
+
+/* dropdown */
+
+.customDropdown {
+  position: relative;
+  display: inline-block;
+  width: 75%;
+}
+
+.dropdownButton {
+  padding: 0.2rem 1rem;
+  background-color: #ffffff;
+  color: black;
+  font-size: 1.2rem;
+  border: 2px solid #efefef;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+
+  button{
+    border: none;
+    background-color: transparent;
+    font-size: 1.1rem;
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 2px solid #efefef;
+  border-radius: 5px;
+  z-index: 1;
+  width: 100%;
+
+
+  button{
+    padding: 7px 5px;
+    width: 9rem;
+    border-radius: 7px;
+    background-color: transparent;
+    outline: none;
+    border: 2px solid #E2E2E2;
+    color: #767575;
+    font-weight: 600;
+  }
+}
+
+.dropdownItem {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dropdownMenu button:hover {
+  background-color: #17a2b8;
+  color: white;
+}
+
+
+/* Board.module.css */
+
+.dueDateRed {
+  background-color: red !important;
+  color: white !important; /* Adjust text color for better readability */
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.doneCard {
+  background-color: green !important;
+  color: white !important; /* Adjust text color for better readability */
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.noDueDate {
+  background-color: transparent;
+  color: inherit; /* Ensure text color remains unchanged */
+  /* Any other styles you want for the button with no due date */
+}
+
